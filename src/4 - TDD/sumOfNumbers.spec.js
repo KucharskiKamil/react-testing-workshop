@@ -8,7 +8,7 @@ import { sumOfNumbers } from './sumOfNumbers';
 //  */
 //
 // żeby testy się wykonywały, usuń .skip
-describe.skip('sumOfNumbers ', () => {
+describe('sumOfNumbers ', () => {
   it('should be a function', () => {
     // when
     const elementType = typeof sumOfNumbers;
