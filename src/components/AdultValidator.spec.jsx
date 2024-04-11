@@ -104,6 +104,36 @@ describe('AdultValidator', () => {
     expect(container).not.toBeEmptyDOMElement();
   });
 
+  it('should  render youre not old enough', async () => {
+    // when
+    const { container } = render(<AdultValidator min={2} />);
+
+    const input = screen.getByRole('textbox', { name: 'Put your age here' });
+
+    // when
+    await userEvent.type(input, '3');
+
+    // then
+    const alertBox = await screen.findByRole('alert');
+
+    expect(alertBox).toHaveTextContent('This page is available only for adult people');
+  });
+
+  it('should  render youre grown ups', async () => {
+    // when
+    const { container } = render(<AdultValidator max={200} />);
+
+    const input = screen.getByRole('textbox', { name: 'Put your age here' });
+
+    // when
+    await userEvent.type(input, '193');
+
+    // then
+    const alertBox = await screen.findByRole('alert');
+
+    expect(alertBox).toHaveTextContent('You are grown up!');
+  });
+
   it('should not render adult validator', () => {
     // when
     const { container } = render(<AdultValidator shouldRender={false} />);
