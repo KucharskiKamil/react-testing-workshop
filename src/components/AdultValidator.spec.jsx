@@ -23,8 +23,7 @@ describe('AdultValidator', () => {
     render(<AdultValidator />);
 
     // then
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument(); // <- getByRole gdy nie znajdzie elementu od razu failuje test
-    // dlatego do szukania elementów, których oczekujemy, że nie będzie - używamy queryByRole
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('should show TO YOUNG alert after entering value smaller than min', async () => {
@@ -33,20 +32,81 @@ describe('AdultValidator', () => {
     const input = screen.getByRole('textbox', { name: 'Put your age here' });
 
     // when
-    await userEvent.type(input, '3'); // <- symulowanie akcji użytkownika
+    await userEvent.type(input, '3');
 
     // then
-    const alertBox = await screen.findByRole('alert'); // <- find(ByRole) używamy do elementów, które dopiero mają się pojawić
-    // test musi być asynchroniczny (skladnia async await), alert pojawi się dopiero po wpisaniu przez nas wartości dlatego musimy na nią "poczekać"
+    const alertBox = await screen.findByRole('alert');
     expect(alertBox).toHaveTextContent('Are you really so young?');
+  });
+
+  it('should show page is available only for adult people', async () => {
+    // given
+    render(<AdultValidator />);
+    const input = screen.getByRole('textbox', { name: 'Put your age here' });
+
+    // when
+    await userEvent.type(input, '15');
+
+    // then
+    const alertBox = await screen.findByRole('alert');
+
+    expect(alertBox).toHaveTextContent('This page is available only for adult people');
+  });
+
+  it('should show that you are grown up', async () => {
+    // given
+    render(<AdultValidator />);
+    const input = screen.getByRole('textbox', { name: 'Put your age here' });
+
+    // when
+    await userEvent.type(input, '25');
+
+    // then
+    const alertBox = await screen.findByRole('alert');
+
+    expect(alertBox).toHaveTextContent('You are grown up');
+  });
+
+  it('should show are you really that old', async () => {
+    // given
+    render(<AdultValidator />);
+    const input = screen.getByRole('textbox', { name: 'Put your age here' });
+
+    // when
+    await userEvent.type(input, '225');
+
+    // then
+    const alertBox = await screen.findByRole('alert');
+
+    expect(alertBox).toHaveTextContent('Are you really so old?');
+  });
+
+  it('should show are you really that old', async () => {
+    // given
+    render(<AdultValidator />);
+    const input = screen.getByRole('textbox', { name: 'Put your age here' });
+
+    // when
+    await userEvent.type(input, '5');
+
+    await userEvent.clear(input);
+
+    // then
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument;
+  });
+
+  it('should  render adult validator', () => {
+    // when
+    const { container } = render(<AdultValidator shouldRender={true} />);
+
+    // then
+    expect(container).not.toBeEmptyDOMElement();
   });
 
   it('should not render adult validator', () => {
     // when
-    const { container } = render(<AdultValidator shouldRender={false} />); // <- container to kontener, któwym byłby wyrenderowany komponent
-    // możemy znaleźć tu jeszcze inne rzeczy jak np rerender -> https://testing-library.com/docs/react-testing-library/api/#render-options
-
-    // screen.debug(); <- możemy zdebugować to co w trakcie testu zostało "wyrenderowane"
+    const { container } = render(<AdultValidator shouldRender={false} />);
 
     // then
     expect(container).toBeEmptyDOMElement();
